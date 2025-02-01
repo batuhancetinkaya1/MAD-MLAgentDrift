@@ -3,26 +3,41 @@ using UnityEngine;
 public class RaycastSensor : MonoBehaviour
 {
     [Header("Sensor Settings")]
-    [SerializeField] private float sensorLength = 5f;    // Raycast uzunluðu
-    [SerializeField] private LayerMask layerMask;        // Engeller / duvarlar hangi layer'da?
+    [SerializeField] private float sensorLength = 5f;
+    [SerializeField] private LayerMask layerMask;
+    [SerializeField] private bool includeBackwardSensor = false;
 
-    public float[] distances; // Her bir sensör için bulduðumuz mesafeler
+    private int rayCount;
+    public float[] distances;
 
-    private void Update()
+    private void Awake()
     {
-        distances = new float[8]; // 8 yön
+        // 180 dereceyi 15°'lik açýlarla bölerek ray sayýsýný hesapla
+        rayCount = (180 / 15) + 1; // 13 ray olacak
+        distances = new float[rayCount];
 
-        // Örnek: 0 - ön, 1 - arka, 2/3/4 - sol yönler, 5/6/7 - sað yönler
-        distances[0] = GetSensorDistance(Vector2.right);
-        distances[1] = GetSensorDistance(Vector2.left);
+        // Baþlangýçta tüm mesafeleri maksimum olarak kabul et
+        for (int i = 0; i < rayCount; i++)
+        {
+            distances[i] = sensorLength;
+        }
+    }
 
-        distances[2] = GetSensorDistance(Vector2.up);
-        distances[3] = GetSensorDistance(Quaternion.Euler(0, 0, 45) * Vector2.up);
-        distances[4] = GetSensorDistance(Quaternion.Euler(0, 0, -45) * Vector2.up);
+    private void FixedUpdate()
+    {
+        for (int i = 0; i < rayCount; i++)
+        {
+            float angle = -90f + (i * 15f); // -90'dan baþla, 15°'lik adýmlarla artýr
+            Vector2 direction = Quaternion.Euler(0, 0, angle) * transform.up;
+            distances[i] = GetSensorDistance(direction);
+        }
 
-        distances[5] = GetSensorDistance(Vector2.down);
-        distances[6] = GetSensorDistance(Quaternion.Euler(0, 0, 135) * Vector2.up);
-        distances[7] = GetSensorDistance(Quaternion.Euler(0, 0, -135) * Vector2.up);
+        if (includeBackwardSensor)
+        {
+            float backwardDistance = GetSensorDistance(-transform.up);
+            System.Array.Resize(ref distances, distances.Length + 1);
+            distances[distances.Length - 1] = backwardDistance;
+        }
     }
 
     private float GetSensorDistance(Vector2 direction)
@@ -36,7 +51,12 @@ public class RaycastSensor : MonoBehaviour
         else
         {
             Debug.DrawLine(transform.position, transform.position + (Vector3)direction * sensorLength, Color.green);
-            return sensorLength; // Maksimum mesafe
+            return sensorLength;
         }
+    }
+
+    public float GetSensorLength()
+    {
+        return sensorLength;
     }
 }
