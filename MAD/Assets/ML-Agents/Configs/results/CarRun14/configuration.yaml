@@ -4,7 +4,7 @@ behaviors:
     trainer_type: ppo
     hyperparameters:
       batch_size: 512
-      buffer_size: 8192
+      buffer_size: 10240
       learning_rate: 0.0003
       beta: 0.01
       epsilon: 0.2
@@ -34,10 +34,10 @@ behaviors:
           memory: null
           goal_conditioning_type: hyper
           deterministic: false
-    init_path: null
+    init_path: C:\Users\Batuhan\Documents\GitHub\MAD-MLAgentDrift\MAD\Assets\ML-Agents\Configs\results\CarRun12\CarAgent\CarAgent-5287971.pt
     keep_checkpoints: 5
     checkpoint_interval: 500000
-    max_steps: 3000000
+    max_steps: 6000000
     time_horizon: 128
     summary_freq: 25000
     threaded: false

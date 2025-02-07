@@ -1,24 +1,25 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class RaycastSensor : MonoBehaviour
 {
-    [Header("Sensor Settings")]
     [SerializeField] private float sensorLength = 5f;
     [SerializeField] private LayerMask layerMask;
-    [SerializeField] private bool includeBackwardSensor = false;
+    [SerializeField] public int angleStep = 15;
+    [SerializeField] private bool drawDebugLines = true;
 
     private int rayCount;
-    public float[] distances;
+    private Vector2[] localRayDirections;
+    public float[] distances { get; private set; }
 
     private void Awake()
     {
-        // 180 dereceyi 15°'lik açýlarla bölerek ray sayýsýný hesapla
-        rayCount = (180 / 15) + 1; // 13 ray olacak
+        rayCount = Mathf.RoundToInt(360f / angleStep);
         distances = new float[rayCount];
-
-        // Baþlangýçta tüm mesafeleri maksimum olarak kabul et
+        localRayDirections = new Vector2[rayCount];
         for (int i = 0; i < rayCount; i++)
         {
+            float angle = (i * 360f / rayCount);
+            localRayDirections[i] = Quaternion.Euler(0f, 0f, angle) * Vector2.up;
             distances[i] = sensorLength;
         }
     }
@@ -27,36 +28,27 @@ public class RaycastSensor : MonoBehaviour
     {
         for (int i = 0; i < rayCount; i++)
         {
-            float angle = -90f + (i * 15f); // -90'dan baþla, 15°'lik adýmlarla artýr
-            Vector2 direction = Quaternion.Euler(0, 0, angle) * transform.up;
-            distances[i] = GetSensorDistance(direction);
-        }
-
-        if (includeBackwardSensor)
-        {
-            float backwardDistance = GetSensorDistance(-transform.up);
-            System.Array.Resize(ref distances, distances.Length + 1);
-            distances[distances.Length - 1] = backwardDistance;
-        }
-    }
-
-    private float GetSensorDistance(Vector2 direction)
-    {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, sensorLength, layerMask);
-        if (hit.collider != null)
-        {
-            Debug.DrawLine(transform.position, hit.point, Color.red);
-            return hit.distance;
-        }
-        else
-        {
-            Debug.DrawLine(transform.position, transform.position + (Vector3)direction * sensorLength, Color.green);
-            return sensorLength;
+            Vector2 worldDirection = transform.rotation * localRayDirections[i];
+            distances[i] = sensorLength;
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, worldDirection, sensorLength, layerMask);
+            if (hit.collider != null) distances[i] = hit.distance;
+            if (drawDebugLines)
+            {
+                if (hit.collider != null)
+                    Debug.DrawLine(transform.position, hit.point, Color.red);
+                else
+                    Debug.DrawLine(transform.position, transform.position + (Vector3)worldDirection * sensorLength, Color.HSVToRGB((float)i / rayCount, 1f, 1f));
+            }
         }
     }
 
     public float GetSensorLength()
     {
         return sensorLength;
+    }
+
+    public Vector2[] GetLocalRayDirections()
+    {
+        return localRayDirections;
     }
 }

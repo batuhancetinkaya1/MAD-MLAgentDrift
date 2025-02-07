@@ -2,64 +2,64 @@
     "CarAgent": {
         "checkpoints": [
             {
-                "steps": 1499944,
-                "file_path": "results\\CarRun6\\CarAgent\\CarAgent-1499944.onnx",
+                "steps": 2499994,
+                "file_path": "results\\CarRun6\\CarAgent\\CarAgent-2499994.onnx",
                 "reward": null,
-                "creation_time": 1738383700.244552,
+                "creation_time": 1738831222.5814884,
                 "auxillary_file_paths": [
-                    "results\\CarRun6\\CarAgent\\CarAgent-1499944.pt"
+                    "results\\CarRun6\\CarAgent\\CarAgent-2499994.pt"
                 ]
             },
             {
-                "steps": 1999899,
-                "file_path": "results\\CarRun6\\CarAgent\\CarAgent-1999899.onnx",
-                "reward": 4.446475874632597,
-                "creation_time": 1738385306.9289722,
-                "auxillary_file_paths": [
-                    "results\\CarRun6\\CarAgent\\CarAgent-1999899.pt"
-                ]
-            },
-            {
-                "steps": 2499902,
-                "file_path": "results\\CarRun6\\CarAgent\\CarAgent-2499902.onnx",
+                "steps": 2999965,
+                "file_path": "results\\CarRun6\\CarAgent\\CarAgent-2999965.onnx",
                 "reward": null,
-                "creation_time": 1738386901.4595027,
+                "creation_time": 1738832937.4217353,
                 "auxillary_file_paths": [
-                    "results\\CarRun6\\CarAgent\\CarAgent-2499902.pt"
+                    "results\\CarRun6\\CarAgent\\CarAgent-2999965.pt"
                 ]
             },
             {
-                "steps": 2999999,
-                "file_path": "results\\CarRun6\\CarAgent\\CarAgent-2999999.onnx",
-                "reward": 4.86859864462167,
-                "creation_time": 1738388492.7299895,
+                "steps": 3499996,
+                "file_path": "results\\CarRun6\\CarAgent\\CarAgent-3499996.onnx",
+                "reward": null,
+                "creation_time": 1738834644.745071,
                 "auxillary_file_paths": [
-                    "results\\CarRun6\\CarAgent\\CarAgent-2999999.pt"
+                    "results\\CarRun6\\CarAgent\\CarAgent-3499996.pt"
                 ]
             },
             {
-                "steps": 3000127,
-                "file_path": "results\\CarRun6\\CarAgent\\CarAgent-3000127.onnx",
-                "reward": 4.86859864462167,
-                "creation_time": 1738388492.7958055,
+                "steps": 3999933,
+                "file_path": "results\\CarRun6\\CarAgent\\CarAgent-3999933.onnx",
+                "reward": 2647.9951508641243,
+                "creation_time": 1738836322.12509,
                 "auxillary_file_paths": [
-                    "results\\CarRun6\\CarAgent\\CarAgent-3000127.pt"
+                    "results\\CarRun6\\CarAgent\\CarAgent-3999933.pt"
+                ]
+            },
+            {
+                "steps": 4135998,
+                "file_path": "results\\CarRun6\\CarAgent\\CarAgent-4135998.onnx",
+                "reward": 630.2177666813135,
+                "creation_time": 1738836780.2625477,
+                "auxillary_file_paths": [
+                    "results\\CarRun6\\CarAgent\\CarAgent-4135998.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 3000127,
+            "steps": 4135998,
             "file_path": "results\\CarRun6\\CarAgent.onnx",
-            "reward": 4.86859864462167,
-            "creation_time": 1738388492.7958055,
+            "reward": 630.2177666813135,
+            "creation_time": 1738836780.2625477,
             "auxillary_file_paths": [
-                "results\\CarRun6\\CarAgent\\CarAgent-3000127.pt"
+                "results\\CarRun6\\CarAgent\\CarAgent-4135998.pt"
             ]
         }
     },
     "metadata": {
         "stats_format_version": "0.3.0",
         "mlagents_version": "0.30.0",
-        "torch_version": "2.6.0+cpu"
+        "torch_version": "2.5.0+cpu"
     }
 }

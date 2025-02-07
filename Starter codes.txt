@@ -1,0 +1,8 @@
+cd C:\Users\Batuhan\Documents\GitHub\MAD-MLAgentDrift\MAD\Assets\ML-Agents\Configs
+C:\MLAgentsProject\env\Scripts\activate
+
+
+mlagents-learn CarAgentPPO.yaml --run-id=CarRun17
+
+
+# init_path: "C:\\Users\\Batuhan\\Documents\\GitHub\\MAD-MLAgentDrift\\MAD\\Assets\\ML-Agents\\Configs\\results\\CarRun12\\CarAgent\\CarAgent-5287971.pt"
