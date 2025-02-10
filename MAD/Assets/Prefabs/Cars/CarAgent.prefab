@@ -17,9 +17,9 @@ GameObject:
   - component: {fileID: 2982007972153439588}
   - component: {fileID: 1912209499901722504}
   - component: {fileID: 1287443879701529001}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CarAgent
-  m_TagString: Untagged
+  m_TagString: Car
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -110,7 +110,7 @@ CapsuleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -153,7 +153,7 @@ Rigidbody2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
@@ -182,8 +182,20 @@ MonoBehaviour:
     m_Bits: 8
   forwardSpeedReward: 0.0015
   checkpointReward: 15
-  lapCompletionReward: 10
-  maxEpisodeTime: 45
+  lapCompletionReward: 20
+  maxEpisodeTime: 10
+  isPunishmentAllowed: 1
+  frontCollisionPenalty: -2
+  slightFrontCollisionPenalty: -1
+  sideCollisionPenalty: -0.5
+  backCollisionPenalty: -0.2
+  collisionMultiplier: -0.2
+  backwardPenalty: -25
+  maxCollisionMultipiliedPenalty: -3
+  maxCollisionsBeforeBigPenalty: 3
+  minImpactSpeedThreshold: 2
+  collisionCount: 0
+  lap: 1
 --- !u!114 &8470373828213293739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197,7 +209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 11
+    VectorObservationSize: 12
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 2
@@ -206,7 +218,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: 6b834b35e38aa9f4eafa55c0d9e3c686, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: CarAgent
