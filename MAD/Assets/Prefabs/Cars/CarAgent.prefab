@@ -183,7 +183,7 @@ MonoBehaviour:
   forwardSpeedReward: 0.0015
   checkpointReward: 15
   lapCompletionReward: 20
-  maxEpisodeTime: 10
+  maxEpisodeTime: 45
   isPunishmentAllowed: 1
   frontCollisionPenalty: -2
   slightFrontCollisionPenalty: -1
@@ -196,6 +196,10 @@ MonoBehaviour:
   minImpactSpeedThreshold: 2
   collisionCount: 0
   lap: 1
+  maxCheckpointDistance: 50
+  randomOrientation: 1
+  forwardOrientation: 0
+  backwardOrientation: 180
 --- !u!114 &8470373828213293739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,7 +213,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 12
+    VectorObservationSize: 14
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 2
@@ -218,7 +222,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 6b834b35e38aa9f4eafa55c0d9e3c686, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: CarAgent
@@ -239,7 +243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DecisionPeriod: 1
+  DecisionPeriod: 5
   DecisionStep: 0
   TakeActionsBetweenDecisions: 1
 --- !u!114 &1912209499901722504

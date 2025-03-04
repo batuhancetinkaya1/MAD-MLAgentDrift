@@ -26,27 +26,34 @@ public class CarAgent : Agent
     [SerializeField] private bool isPunishmentAllowed = false;
 
     [Header("Çarpma Cezaları")]
-    [SerializeField] private float frontCollisionPenalty = -2.0f; // 0° çarpma (tam ön)
-    [SerializeField] private float slightFrontCollisionPenalty = -1.0f; // ±30° çarpma (ön yanlar)
-    [SerializeField] private float sideCollisionPenalty = -0.5f; // ±90° çarpma (yan çarpmalar)
-    [SerializeField] private float backCollisionPenalty = -0.2f; // ±90° çarpma (yan çarpmalar)
-    [SerializeField] private float collisionMultiplier = -0.2f; // Her ek çarpma için ekstra ceza
+    [SerializeField] private float frontCollisionPenalty = -2.0f;
+    [SerializeField] private float slightFrontCollisionPenalty = -1.0f;
+    [SerializeField] private float sideCollisionPenalty = -0.5f;
+    [SerializeField] private float backCollisionPenalty = -0.2f;
+    [SerializeField] private float collisionMultiplier = -0.2f;
     [SerializeField] private float backwardPenalty = -25.0f;
     [SerializeField] private float maxCollisionMultipiliedPenalty = -3.0f;
 
     [Header("Çarpma Ayarları")]
-    [SerializeField] private int maxCollisionsBeforeBigPenalty = 3; // Kaç çarpmadan sonra ekstra ceza verilecek?
+    [SerializeField] private int maxCollisionsBeforeBigPenalty = 3;
     [SerializeField] private float minImpactSpeedThreshold = 2f;
 
     [Header("Inspector Observation")]
-    [SerializeField] private int collisionCount = 0; // Kaç kere çarptığını takip ediyoruz
-    [SerializeField] private int lap = 1; // Kaç kere çarptığını takip ediyoruz
+    [SerializeField] private int collisionCount = 0;
+    [SerializeField] private int lap = 1;
 
     private int nextCheckpointIndex;
     int expectedCheckpointIndex;
     int backwardCheckpointIndex;
     private bool isCounterClockwise;
     private float episodeTime;
+
+    public float maxCheckpointDistance = 50f;
+
+    [Header("Initial Rotation (Euler)")]
+    [SerializeField] private bool randomOrientation = true;
+    [SerializeField] private float forwardOrientation = 0f;
+    [SerializeField] private float backwardOrientation = 180f;
 
     public override void Initialize()
     {
@@ -57,23 +64,21 @@ public class CarAgent : Agent
 
     public override void OnEpisodeBegin()
     {
-        isCounterClockwise = Random.value > 0.5f;
+        if (randomOrientation)
+        {
+            isCounterClockwise = (Random.value > 0.5f);
+        }
 
         CheckPoint startCheckpoint = checkpointManager.GetCheckpointByIndex(0);
         if (startCheckpoint == null) return;
 
         car.ResetPhysics();
-
         car.transform.position = startCheckpoint.transform.position;
-        car.transform.rotation = isCounterClockwise
-            ? Quaternion.Euler(0f, 0f, 180f)
-            : Quaternion.Euler(0f, 0f, 0f);
-
+        float chosenAngle = isCounterClockwise ? backwardOrientation : forwardOrientation;
+        car.transform.rotation = Quaternion.Euler(0f, 0f, chosenAngle);
         checkpointManager.ResetAllCheckpoints();
-
         int totalCheckpoints = checkpointManager.TotalCheckpoints;
         nextCheckpointIndex = isCounterClockwise ? 1 : totalCheckpoints - 1;
-
         collisionCount = 0;
         lap = 1;
         episodeTime = 0f;
@@ -87,37 +92,28 @@ public class CarAgent : Agent
             float directSum = 0f, frontSum = 0f, leftSum = 0f, rightSum = 0f, backSum = 0f;
             int directCount = 0, frontCount = 0, leftCount = 0, rightCount = 0, backCount = 0;
 
-            // RaycastSensor içindeki yerel ray yönlerini elde ediyoruz.
             Vector2[] localRayDirections = raycastSensor.GetLocalRayDirections();
 
             for (int i = 0; i < totalRays; i++)
             {
-                // Normalleştirilmiş mesafe: [0,1] arası
                 float normalizedDist = raycastSensor.distances[i] / raycastSensor.GetSensorLength();
-                // Ray'un yönü ile aracın önü (Vector2.up) arasındaki açıyı hesaplıyoruz.
-                // Bu açı, aracın yerel koordinat sistemine göre konumlandırılmıştır.
                 Vector2 worldDirection = transform.rotation * localRayDirections[i];
                 float signedAngle = Vector2.SignedAngle(transform.up, worldDirection);
-                // Varsayılan ağırlık değeri 1
                 float importance = 1f;
                 if (Mathf.Abs(signedAngle) == 0f)
                 {
-                    // Tam ön: en büyük önem veriliyor.
                     importance = 2f;
                     directSum += normalizedDist * importance;
                     directCount++;
                 }
-                // Açıya göre hangi bölgeye ait olduğunu belirliyoruz.
                 else if (Mathf.Abs(signedAngle) <= 15f)
                 {
-                    // Ön: ekstra önem veriliyor.
                     importance = 1.5f;
                     frontSum += normalizedDist * importance;
                     frontCount++;
                 }
                 else if (Mathf.Abs(signedAngle) <= 90f)
                 {
-                    // Sağ veya sol bölgeler
                     if (signedAngle >= 0f)
                     {
                         rightSum += normalizedDist * importance;
@@ -131,38 +127,33 @@ public class CarAgent : Agent
                 }
                 else if (Mathf.Abs(signedAngle) <= 135f)
                 {
-                    // Arka bölge, orta önem
                     importance = 0.5f;
                     backSum += normalizedDist * importance;
                     backCount++;
                 }
                 else
                 {
-                    // Arka bölgenin daha yan kısımları, düşük önem
                     importance = 0.2f;
                     backSum += normalizedDist * importance;
                     backCount++;
                 }
             }
 
-            // Her bölgenin ortalamasını hesaplıyoruz (eğer bölgeden ray yoksa varsayılan 1f veriliyor)
             float dAvg = directCount > 0 ? directSum / directCount : 0f;
             float fAvg = frontCount > 0 ? frontSum / frontCount : 1f;
             float lAvg = leftCount > 0 ? leftSum / leftCount : 1f;
             float rAvg = rightCount > 0 ? rightSum / rightCount : 1f;
             float bAvg = backCount > 0 ? backSum / backCount : 1f;
 
-            // Gözlemleri ekliyoruz:
             sensor.AddObservation(dAvg);
-            sensor.AddObservation(fAvg);         // Öne yönelik ortalama
-            sensor.AddObservation(lAvg);         // Sola yönelik ortalama
-            sensor.AddObservation(rAvg);         // Sağa yönelik ortalama
-            sensor.AddObservation(bAvg);         // Arkaya yönelik ortalama
-            sensor.AddObservation(lAvg - rAvg);    // Sol-sağ farkı
+            sensor.AddObservation(fAvg);
+            sensor.AddObservation(lAvg);
+            sensor.AddObservation(rAvg);
+            sensor.AddObservation(bAvg);
+            sensor.AddObservation(lAvg - rAvg);
         }
         else
         {
-            // Raycast verisi alınamadıysa güvenli (varsayılan) değerler ekleniyor.
             sensor.AddObservation(1f);
             sensor.AddObservation(1f);
             sensor.AddObservation(1f);
@@ -171,7 +162,6 @@ public class CarAgent : Agent
             sensor.AddObservation(0f);
         }
 
-        // Ek olarak aracın hız ve açısal hız bilgileri de gözlem olarak ekleniyor.
         Vector2 velocity = car.rb.linearVelocity;
         float forwardSpeed = Vector2.Dot(velocity, car.transform.up);
         float lateralSpeed = Vector2.Dot(velocity, car.transform.right);
@@ -184,6 +174,23 @@ public class CarAgent : Agent
         Vector2 upDir = car.transform.up.normalized;
         sensor.AddObservation(upDir.x);
         sensor.AddObservation(upDir.y);
+
+        CheckPoint nextCP = checkpointManager.GetCheckpointByIndex(nextCheckpointIndex);
+        if (nextCP != null)
+        {
+            Vector2 cpPosition = (Vector2)nextCP.transform.position;
+            Vector2 relativePos = cpPosition - (Vector2)car.transform.position;
+            float distance = relativePos.magnitude;
+            Vector2 directionToCP = relativePos.normalized;
+            float angle = Vector2.SignedAngle(car.transform.up, directionToCP);
+            sensor.AddObservation(Mathf.Clamp01(distance / maxCheckpointDistance));
+            sensor.AddObservation(angle / 180f);
+        }
+        else
+        {
+            sensor.AddObservation(0f);
+            sensor.AddObservation(0f);
+        }
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -217,29 +224,17 @@ public class CarAgent : Agent
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (!isPunishmentAllowed) return;
-
-        // Sadece "Grid" tag’ine sahip nesnelerle çarpışmaları kontrol et
         if (!collision.gameObject.CompareTag("Grid"))
             return;
 
-        // Çarpışma temasındaki ilk noktanın normalini alıyoruz
         Vector2 collisionNormal = collision.contacts[0].normal;
         Vector2 carForward = transform.up;
-        // Aracın ön yönü ile duvar normali arasında açıyı hesaplıyoruz.
-        // (Negatif normal kullanarak, arabanın neresine çarptığını yorumluyoruz.)
         float impactAngle = Vector2.SignedAngle(carForward, -collisionNormal);
-        float impactSpeed = car.rb.linearVelocity.magnitude; // Çarpma anındaki hız
-
+        float impactSpeed = car.rb.linearVelocity.magnitude;
         float penalty = 0f;
 
-        // Açıya göre ceza belirleme:
-        // Eğer çarpışma tam önden (0 dereceye çok yakın) gerçekleşiyorsa, en ağır ceza;
-        // 0'dan 30 derece arası (ön yanlar) orta ceza;
-        // 30 ile 90 derece arası (yan) hafif ceza verilir.
-        // 90 dereceden büyük açılar (arka) için ceza uygulanmaz.
         if (Mathf.Abs(impactAngle) < 0.1f)
         {
-            // Neredeyse tam önden çarpmada (0°)
             penalty = frontCollisionPenalty;
         }
         else if (Mathf.Abs(impactAngle) <= 30f)
@@ -256,21 +251,17 @@ public class CarAgent : Agent
             return;
         }
 
-        // Düşük hızda çarpma durumunda ceza yarıya indiriliyor
         if (impactSpeed < minImpactSpeedThreshold)
         {
             penalty *= 0.5f;
         }
 
-        // Artan ceza: Belirli sayıda çarpmadan sonra (maxCollisionsBeforeBigPenalty)
-        // ek ceza uygulanıyor. Aşağıdaki if–else yapısı ile bu durumu yönetiyoruz.
         if (collisionCount < maxCollisionsBeforeBigPenalty)
         {
             AddReward(penalty);
         }
         else
         {
-            // collisionCount arttıkça ek ceza ekle, ancak toplam ek ceza -3.0f ile sınırlandırılsın.
             float additionalPenalty = Mathf.Min(collisionMultiplier * collisionCount, maxCollisionMultipiliedPenalty);
             AddReward(penalty + additionalPenalty);
         }
@@ -278,17 +269,13 @@ public class CarAgent : Agent
         collisionCount++;
     }
 
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         CheckPoint cp = other.GetComponent<CheckPoint>();
         if (cp == null) return;
 
         int total = checkpointManager.TotalCheckpoints;
-
-        // Beklenen doğru checkpoint'in index'i
         expectedCheckpointIndex = nextCheckpointIndex;
-        // Geride kalınan (geri dönüş) checkpoint index'i:
         backwardCheckpointIndex = isCounterClockwise
             ? (nextCheckpointIndex - 2 + total) % total
             : (nextCheckpointIndex + 2) % total;
@@ -297,28 +284,28 @@ public class CarAgent : Agent
         {
             float timeTaken = episodeTime;
             episodeTime = 0f;
-
             float timeBonus = Mathf.Max(0, (maxEpisodeTime - timeTaken));
             float totalReward = checkpointReward + timeBonus;
-
             AddReward(totalReward);
 
             if (nextCheckpointIndex == 0)
             {
                 AddReward(lapCompletionReward);
                 lap++;
+                if (lap > 5)
+                {
+                    EndEpisode();
+                    return;
+                }
             }
 
-            // Doğru checkpoint'e geçtikten sonra sonraki checkpoint'i ayarla:
             nextCheckpointIndex = isCounterClockwise
                 ? (nextCheckpointIndex + 1) % total
                 : (nextCheckpointIndex - 1 + total) % total;
         }
-        // Eğer ajan, beklenen checkpoint yerine geride kalan checkpoint'ten geçerse
         else if (cp.CheckpointIndex == backwardCheckpointIndex && isPunishmentAllowed)
         {
             AddReward(backwardPenalty);
-
             EndEpisode();
         }
     }
