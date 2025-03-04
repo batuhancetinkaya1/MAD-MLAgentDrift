@@ -8,6 +8,6 @@ mlagents-learn CarAgentPPO.yaml --run-id=CarRun101
 mlagents-learn CarAgentSAC.yaml --run-id=CarRun17
 mlagents-learn CarAgentPPO.yaml --run-id=MultiRun1
 
-tensorboard --logidr reslts --port 6006
+tensorboard serve --logdir results --port 6006
 
 # init_path: "C:\\Users\\Batuhan\\Documents\\GitHub\\MAD-MLAgentDrift\\MAD\\Assets\\ML-Agents\\Configs\\results\\CarRun12\\CarAgent\\CarAgent-5287971.pt"
