@@ -52,15 +52,15 @@ This project trains a 2D drifting car agent using Unity & ML-Agents. The AI is d
 
 ### Catalunya
 Located near Barcelona, **Catalunya** features long straights and smooth curves. It is the track where the agent performs best (avg. ~6 collisions per lap).  
-![Catalunya](PLACEHOLDER_IMG_PATH)
+![image](https://github.com/user-attachments/assets/d3e75905-4b30-4bd6-b787-7f95798fd7bf)
 
 ### Istanbul Park
 Known for its famous Turn 8, **Istanbul Park** combines high speeds with sharp turns. This track offers a moderate challenge with an average of ~8 collisions per lap.  
-![Istanbul Park](PLACEHOLDER_IMG_PATH)
+![image](https://github.com/user-attachments/assets/324786e5-312f-4b8c-b316-4b2eb7f01b90)
 
 ### Monaco
 **Monaco** is a tight circuit with very close walls. With numerous checkpoints (~27 per lap) and sharp corners, it averages ~10 collisions per lap. Its smaller scale relative to the car adds an extra layer of challenge.  
-![Monaco](PLACEHOLDER_IMG_PATH)
+![image](https://github.com/user-attachments/assets/7c60707e-a885-4462-a622-e43b58e03731)
 
 ---
 
@@ -76,8 +76,6 @@ Known for its famous Turn 8, **Istanbul Park** combines high speeds with sharp t
   - Users can adjust configuration files to review all training runs.
 - **Best Model:**  
   `5499989.onnx` represents the best-performing model.
-  
-![Training Graph](PLACEHOLDER_IMG_PATH)
 
 ---
 
@@ -136,15 +134,33 @@ TensorBoard will display graphs and metrics for all training runs.
 ## Screenshots
 
 #### Track Overviews:
-![Catalunya, Istanbul Park, Monaco](PLACEHOLDER_IMG_PATH)
+catalunya
+![image](https://github.com/user-attachments/assets/d3e75905-4b30-4bd6-b787-7f95798fd7bf)
+istanbul park
+![image](https://github.com/user-attachments/assets/324786e5-312f-4b8c-b316-4b2eb7f01b90)
+Monaco
+![image](https://github.com/user-attachments/assets/7c60707e-a885-4462-a622-e43b58e03731)
+
+
+
+
 
 #### Car Prefab in Unity:
-![CarAgent Prefab in Editor](PLACEHOLDER_IMG_PATH)
+![image](https://github.com/user-attachments/assets/b5f2519b-bed7-48b0-b8f5-5dc88418def3)
+
 
 #### TensorBoard Training Graphs:
-![TensorBoard Graphs](PLACEHOLDER_IMG_PATH)
+![image](https://github.com/user-attachments/assets/6611842d-3062-46cf-8394-02592faea3e6)
+![image](https://github.com/user-attachments/assets/4ec633be-4cd6-4e66-a771-42fcb9429d05)
+![image](https://github.com/user-attachments/assets/7da31c5e-c135-4d8f-9a9f-bd63177362c9)
+![image](https://github.com/user-attachments/assets/7b6ee0c5-7a3c-4f14-9df2-e8163563dfe6)
+![image](https://github.com/user-attachments/assets/07e9dbf6-8749-4a7f-bde7-06a06b2329c9)
+![image](https://github.com/user-attachments/assets/8fbeb906-7f8a-4f27-bcd5-30c03fc17223)
+![image](https://github.com/user-attachments/assets/f9eece1c-50c9-41a5-a3b0-dce83fd41d39)
+![image](https://github.com/user-attachments/assets/976b3417-ad8f-4e5c-9467-5e8e324da530)
+![image](https://github.com/user-attachments/assets/a2e6c41e-894e-4b80-a481-fa27091c7279)
 
-*(Replace `PLACEHOLDER_IMG_PATH` with your actual image paths.)*
+
 
 ---
 
